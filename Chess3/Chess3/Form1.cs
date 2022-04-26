@@ -84,7 +84,7 @@ namespace Chess3
             SetFigure(white_rook, 0, 0, "white;rook");
             SetFigure(black_rook, 0, 7, "black;rook");
             SetFigure(black_rook, 7, 7, "black;rook");
-            SetFigure(black_bishop, 2, 7, "black;bishop");;
+            SetFigure(black_bishop, 2, 7, "black;bishop"); ;
             SetFigure(black_bishop, 5, 7, "black;bishop");
             SetFigure(white_bishop, 2, 0, "white;bishop");
             SetFigure(white_bishop, 5, 0, "white;bishop");
@@ -96,7 +96,7 @@ namespace Chess3
             SetFigure(white_knight, 6, 0, "white;knight");
             SetFigure(black_knight, 1, 7, "black;knight");
             SetFigure(black_knight, 6, 7, "black;knight");
-            for(int i = 0; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 SetFigure(white_pawn, i, 1, "white;pawn");
             }
@@ -125,7 +125,7 @@ namespace Chess3
             int i = int.Parse(index[0]);
             int j = int.Parse(index[1]);
 
-            if(cell.BackColor != Color.Red)
+            if (cell.BackColor != Color.Red)
             {
                 return;
             }
@@ -150,19 +150,90 @@ namespace Chess3
             PlayerColor playerColor = (PlayerColor)Enum.Parse(typeof(PlayerColor), index2[0], true);
             ChessHandlers[chessType](playerColor, i, j);
         }
-        private void RookHandle(PlayerColor playercolor, int i, int j)
-        { 
-
+        private void RookHandle(PlayerColor playerColor, int i, int j)
+        {
+            for(int k = j; j < 7; j++)
+            {
+                cells[i, k + 1].BackColor = Color.Red;
+            }
         }
-        private void KingHandle(PlayerColor playercolor, int i, int j)
+        private void KingHandle(PlayerColor playerColor, int i, int j)
+        {
+            
+            if (j != 7)
+            {
+                var cellType = CheckStepAvaliable(playerColor, i, j + 1);
+                if(cellType == CellType.Empty || cellType == CellType.EnemyFigure)
+                    cells[i, j + 1].BackColor = Color.Red;
+            }
+
+            if (i != 7)
+            {
+                var cellType = CheckStepAvaliable(playerColor, i + 1, j);
+                if (cellType == CellType.Empty || cellType == CellType.EnemyFigure)
+                    cells[i + 1, j].BackColor = Color.Red;
+            }
+
+            if (i != 0)
+            {
+                var cellType = CheckStepAvaliable(playerColor, i - 1, j);
+                if ((cellType == CellType.Empty || cellType == CellType.EnemyFigure))
+                {
+                    cells[i - 1, j].BackColor = Color.Red;
+                }
+            }
+
+            if (j != 0)
+            {
+                var cellType = CheckStepAvaliable(playerColor, i, j - 1);
+                if ((cellType == CellType.Empty || cellType == CellType.EnemyFigure))
+                {
+                    cells[i, j - 1].BackColor = Color.Red;
+                }
+            }
+
+            if (i != 7 && j != 7)
+            {
+                var cellType = CheckStepAvaliable(playerColor, i + 1, j + 1);
+                if ((cellType == CellType.Empty || cellType == CellType.EnemyFigure))
+                {
+                    cells[i + 1, j + 1].BackColor = Color.Red;
+                }
+            }
+
+            if (i != 0 && j != 0)
+            {
+                var cellType = CheckStepAvaliable(playerColor, i - 1, j - 1);
+                if (cellType == CellType.Empty || cellType == CellType.EnemyFigure)
+                {
+                    cells[i - 1, j - 1].BackColor = Color.Red;
+                }
+            }
+
+            if (i != 7 && j != 0)
+            {
+                var cellType = CheckStepAvaliable(playerColor, i + 1, j - 1);
+                if (cellType == CellType.Empty || cellType == CellType.EnemyFigure)
+                {
+                    cells[i + 1, j - 1].BackColor = Color.Red;
+                }
+            }
+
+            if (i != 0 && j != 7)
+            {
+                var cellType = CheckStepAvaliable(playerColor, i - 1, j + 1);
+                if (cellType == CellType.Empty || cellType == CellType.EnemyFigure)
+                {
+                    cells[i - 1, j + 1].BackColor = Color.Red;
+                }
+            }
+        }
+
+        private void KnightHandle(PlayerColor playerColor, int i, int j)
         {
 
         }
-        private void KnightHandle(PlayerColor playercolor, int i, int j)
-        {
-
-        }
-        private void QueenHandle(PlayerColor playercolor, int i, int j)
+        private void QueenHandle(PlayerColor playerColor, int i, int j)
         {
 
         }
@@ -174,18 +245,40 @@ namespace Chess3
 
             if (playerColor == PlayerColor.White)
             {
-                for (int k = j; k < j + multipluer; k++)
-                    cells[i, k + 1].BackColor = Color.Red;
+                var cellType = CheckStepAvaliable(playerColor, i, j + 1);
+                if (cellType == CellType.Empty)
+                {
+                    for (int k = j; k < j + multipluer; k++)
+                        cells[i, k + 1].BackColor = Color.Red;
+                }
+
+                cellType = CheckStepAvaliable(playerColor, i - 1, j + 1);
+                if (cellType == CellType.EnemyFigure)
+                    cells[i - 1, j + 1].BackColor = Color.Red;
+
+                cellType = CheckStepAvaliable(playerColor, i + 1, j + 1);
+                if (cellType == CellType.EnemyFigure)
+                    cells[i + 1, j + 1].BackColor = Color.Red;
             }
             else
             {
-                for (int k = j; k > j - multipluer; k--)
-                    cells[i, k - 1].BackColor = Color.Red;
+                var cellType = CheckStepAvaliable(playerColor, i, j - 1);
+                if (cellType == CellType.Empty && cellType != CellType.EnemyFigure)
+                {
+                    for (int k = j; k > j - multipluer; k--)
+                        cells[i, k - 1].BackColor = Color.Red;
+                }
+
+                cellType = CheckStepAvaliable(playerColor, i + 1, j - 1);
+                if (cellType == CellType.EnemyFigure)
+                    cells[i + 1, j - 1].BackColor = Color.Red;
+
+                cellType = CheckStepAvaliable(playerColor, i - 1, j - 1);
+                if (cellType == CellType.EnemyFigure)
+                    cells[i - 1, j - 1].BackColor = Color.Red;
             }
-
-
         }
-        private void BishopHandle(PlayerColor playercolor, int i, int j)
+        private void BishopHandle(PlayerColor playerColor, int i, int j)
         {
 
         }
@@ -216,6 +309,23 @@ namespace Chess3
                     }
                 }
             }
+        }
+
+        private CellType CheckStepAvaliable(PlayerColor playerColor, int i, int j)
+        {
+            PictureBox figure;
+            if (cells[i, j].Controls.Count == 0)
+                return CellType.Empty;
+
+            figure = (PictureBox)cells[i, j].Controls[0];
+            var index2 = figure.Tag.ToString().Split(';');
+            ChessType chessType = (ChessType)Enum.Parse(typeof(ChessType), index2[1], true);
+            PlayerColor figurePlayerColor = (PlayerColor)Enum.Parse(typeof(PlayerColor), index2[0], true);
+
+            if (figurePlayerColor == playerColor)
+                return CellType.AllieFigure;
+
+            return CellType.EnemyFigure;
         }
     }
 }

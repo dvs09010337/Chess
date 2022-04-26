@@ -21,4 +21,10 @@ namespace Chess3
         White = 1
     }
 
+    public enum CellType
+    {
+        Empty = 0,
+        AllieFigure = 1,
+        EnemyFigure = 2
+    }
 }
